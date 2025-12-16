@@ -10,7 +10,7 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Backend Course",
+            "name": "Максим Свидовский",
             "email": "example@university.ru"
         },
         "version": "{{.Version}}"
@@ -20,7 +20,7 @@ const docTemplate = `{
     "paths": {
         "/notes": {
             "get": {
-                "description": "Возвращает список заметок",
+                "description": "Возвращает список заметок (публичный доступ)",
                 "tags": [
                     "notes"
                 ],
@@ -47,6 +47,12 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Создание новой заметки (требуется авторизация)",
                 "consumes": [
                     "application/json"
                 ],
@@ -84,6 +90,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -98,6 +113,12 @@ const docTemplate = `{
         },
         "/notes/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение заметки по ID (требуется авторизация)",
                 "tags": [
                     "notes"
                 ],
@@ -118,6 +139,15 @@ const docTemplate = `{
                             "$ref": "#/definitions/core.Note"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -130,6 +160,12 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Удаление заметки по ID (требуется авторизация)",
                 "tags": [
                     "notes"
                 ],
@@ -147,6 +183,15 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -159,6 +204,12 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Частичное обновление заметки (требуется авторизация)",
                 "consumes": [
                     "application/json"
                 ],
@@ -193,6 +244,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -260,6 +320,14 @@ const docTemplate = `{
                     "example": "Обновлено"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Токен доступа в формате: \"Bearer {token}\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

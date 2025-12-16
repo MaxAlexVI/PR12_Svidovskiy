@@ -4,7 +4,7 @@
         "description": "Учебный REST API для заметок (CRUD).",
         "title": "Notes API",
         "contact": {
-            "name": "Backend Course",
+            "name": "Максим Свидовский",
             "email": "example@university.ru"
         },
         "version": "1.0"
@@ -13,7 +13,7 @@
     "paths": {
         "/notes": {
             "get": {
-                "description": "Возвращает список заметок",
+                "description": "Возвращает список заметок (публичный доступ)",
                 "tags": [
                     "notes"
                 ],
@@ -40,6 +40,12 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Создание новой заметки (требуется авторизация)",
                 "consumes": [
                     "application/json"
                 ],
@@ -77,6 +83,15 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -91,6 +106,12 @@
         },
         "/notes/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение заметки по ID (требуется авторизация)",
                 "tags": [
                     "notes"
                 ],
@@ -111,6 +132,15 @@
                             "$ref": "#/definitions/core.Note"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -123,6 +153,12 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Удаление заметки по ID (требуется авторизация)",
                 "tags": [
                     "notes"
                 ],
@@ -140,6 +176,15 @@
                     "204": {
                         "description": "No Content"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -152,6 +197,12 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Частичное обновление заметки (требуется авторизация)",
                 "consumes": [
                     "application/json"
                 ],
@@ -186,6 +237,15 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -253,6 +313,14 @@
                     "example": "Обновлено"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Токен доступа в формате: \"Bearer {token}\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

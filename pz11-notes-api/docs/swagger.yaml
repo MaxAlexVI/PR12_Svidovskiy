@@ -35,14 +35,14 @@ definitions:
 info:
   contact:
     email: example@university.ru
-    name: Backend Course
+    name: Максим Свидовский
   description: Учебный REST API для заметок (CRUD).
   title: Notes API
   version: "1.0"
 paths:
   /notes:
     get:
-      description: Возвращает список заметок
+      description: Возвращает список заметок (публичный доступ)
       responses:
         "200":
           description: OK
@@ -62,6 +62,7 @@ paths:
     post:
       consumes:
       - application/json
+      description: Создание новой заметки (требуется авторизация)
       parameters:
       - description: Данные новой заметки
         in: body
@@ -82,17 +83,26 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: Internal Server Error
           schema:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Создать заметку
       tags:
       - notes
   /notes/{id}:
     delete:
+      description: Удаление заметки по ID (требуется авторизация)
       parameters:
       - description: ID
         in: path
@@ -102,16 +112,25 @@ paths:
       responses:
         "204":
           description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "404":
           description: Not Found
           schema:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Удалить заметку
       tags:
       - notes
     get:
+      description: Получение заметки по ID (требуется авторизация)
       parameters:
       - description: ID
         in: path
@@ -123,18 +142,27 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/core.Note'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "404":
           description: Not Found
           schema:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Получить заметку
       tags:
       - notes
     patch:
       consumes:
       - application/json
+      description: Частичное обновление заметки (требуется авторизация)
       parameters:
       - description: ID
         in: path
@@ -158,13 +186,27 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "404":
           description: Not Found
           schema:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Обновить заметку (частично)
       tags:
       - notes
+securityDefinitions:
+  BearerAuth:
+    description: 'Токен доступа в формате: "Bearer {token}"'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

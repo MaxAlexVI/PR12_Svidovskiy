@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes API - ReDoc</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; }
+        .loading {
+            padding: 40px;
+            text-align: center;
+            font-family: Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="redoc-container"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/redoc@2.0.0/bundles/redoc.standalone.min.js"></script>
+    <script>
+        // Показываем сообщение о загрузке
+        document.getElementById('redoc-container').innerHTML = 
+            '<div class="loading"><h3>Загрузка документации...</h3></div>';
+        
+        // Загружаем спецификацию
+        fetch('/swagger/doc.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(spec => {
+                console.log('Спецификация загружена:', spec.info.title);
+                
+                // Инициализируем ReDoc
+                Redoc.init(spec, {
+                    scrollYOffset: 50,
+                    hideDownloadButton: false,
+                    expandResponses: "200,201",
+                    requiredPropsFirst: true,
+                    noAutoAuth: true,
+                    theme: {
+                        colors: {
+                            primary: {
+                                main: '#1890ff'
+                            }
+                        },
+                        typography: {
+                            fontSize: '16px',
+                            lineHeight: '1.6',
+                            fontFamily: 'Roboto, sans-serif',
+                            headings: {
+                                fontFamily: 'Montserrat, sans-serif',
+                                fontWeight: 600
+                            }
+                        }
+                    }
+                }, document.getElementById('redoc-container'));
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('redoc-container').innerHTML = 
+                    '<div style="padding: 40px; text-align: center;">' +
+                    '<h2 style="color: #d32f2f;">⚠️ Ошибка загрузки документации</h2>' +
+                    '<p><strong>' + error.message + '</strong></p>' +
+                    '<p>Возможные причины:</p>' +
+                    '<ul style="text-align: left; display: inline-block;">' +
+                    '<li>Сервер не запущен</li>' +
+                    '<li>Нет доступа к <a href="/swagger/doc.json">/swagger/doc.json</a></li>' +
+                    '<li>Проблемы с сетью</li>' +
+                    '</ul>' +
+                    '<div style="margin-top: 20px;">' +
+                    '<a href="/swagger/index.html" style="background: #1890ff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Перейти к Swagger UI</a>' +
+                    '</div>' +
+                    '</div>';
+            });
+    </script>
+</body>
+</html>
